@@ -1,6 +1,6 @@
-crewai==0.30.11
-langchain-google-genai==1.0.3
-pydantic>=2.4.2,<3
+crewai
+langchain-google-genai
 langchain-community
-tavily-python==0.3.1
+tavily-python
+pysqlite3-binary
 streamlit
