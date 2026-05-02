@@ -1,56 +1,69 @@
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# 1. THE SQLITE PATCH (MUST BE AT THE VERY TOP)
+try:
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass 
 
 import os
 import streamlit as st
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, Process
 from langchain_google_genai import ChatGoogleGenerativeAI
-
-# 1. Correct 2026 Import for CrewAI Tools
-try:
-    from crewai_tools import TavilySearchTool
-except ImportError:
-    st.error("Installation Error: Please ensure 'crewai-tools' is in your requirements.txt and reboot.")
-    st.stop() # This prevents the NameError by stopping the script here
+from crewai_tools import TavilySearchTool
 
 # 2. Setup API Keys
-os.environ["GOOGLE_API_KEY"] = st.secrets.get("GOOGLE_API_KEY", "YOUR_KEY")
-os.environ["TAVILY_API_KEY"] = st.secrets.get("TAVILY_API_KEY", "YOUR_KEY")
+os.environ["GOOGLE_API_KEY"] = st.secrets.get("GOOGLE_API_KEY", "")
+os.environ["TAVILY_API_KEY"] = st.secrets.get("TAVILY_API_KEY", "")
 
-# 3. Initialize the Brain
+# 3. Define the Brain
 llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash",
     google_api_key=os.environ["GOOGLE_API_KEY"]
 )
 
-# 4. Initialize the Tool (Using the correct 2026 class name)
-search_tool = TavilySearchTool()
+# 4. Initialize Tool
+try:
+    search_tool = TavilySearchTool()
+except Exception as e:
+    st.error(f"Tool Error: {e}")
+    st.stop()
 
-st.title("🚀 Agentic Researcher v3.3")
+st.title("🚀 Agentic Researcher v4.0")
 company = st.text_input("Enter Company Name:")
 
 if st.button("Run Agents") and company:
     # 5. Define Agent
     researcher = Agent(
         role='Market Analyst',
-        goal=f'Research {company} news',
+        goal=f'Find 3 recent news facts about {company}',
         backstory='Expert researcher.',
         tools=[search_tool],
         llm=llm,
-        verbose=True
+        verbose=True,
+        memory=False # <--- EXPLICITLY DISABLE MEMORY HERE
     )
 
     # 6. Define Task
     task = Task(
-        description=f'Find 3 facts about {company}.',
-        expected_output='3 bullet points.',
+        description=f'Search for the latest news on {company}.',
+        expected_output='A bulleted list of 3 facts.',
         agent=researcher
     )
 
-    # 7. Launch
-    crew = Crew(agents=[researcher], tasks=[task], verbose=True)
+    # 7. Define the Crew (The "Manager")
+    crew = Crew(
+        agents=[researcher],
+        tasks=[task],
+        process=Process.sequential,
+        verbose=True,
+        memory=False # <--- EXPLICITLY DISABLE MEMORY HERE TOO
+    )
     
-    with st.spinner("Agent is searching..."):
-        result = crew.kickoff()
-        st.markdown(str(result.raw))
+    with st.spinner("Agent is working..."):
+        try:
+            result = crew.kickoff()
+            st.markdown("### Research Results:")
+            st.markdown(str(result.raw))
+        except Exception as e:
+            st.error(f"Execution Error: {e}")
