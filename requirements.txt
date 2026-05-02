@@ -1,6 +1,11 @@
-crewai
+crewai[tools]
 langchain-google-genai
 langchain-community
 tavily-python
 pysqlite3-binary
+streamlit
+pysqlite3-binary
+crewai[tools]
+crewai-tools
+langchain-google-genai
 streamlit
