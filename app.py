@@ -13,7 +13,6 @@ st.title("Free Agentic Proposal Researcher")
 company=st.text_input("Enter Company Name to Research:")
 if st.button("Generate Proposal Outline") and company:
     researcher = Agent(
-
         role='Business Researcher',
         goal=f'Find key challenges and recent news for {company}',
         backstory='Expert in corporate strategy and market analysis.',
