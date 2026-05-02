@@ -4,3 +4,4 @@ crewai-tools
 tavily-python
 langchain-google-genai
 streamlit
+pydantic-settings
