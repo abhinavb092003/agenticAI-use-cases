@@ -2,10 +2,10 @@ import os
 import streamlit as st
 from crewai import Agent, Task, Crew, Process
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.tools.tavily_search import tavilySearchResults
+from langchain_community.tools.tavily_search import TavilySearchResults
 
 os.environ["GOOGLE_API_KEY"] = "YOUR_GEMINI_API_KEY"
-os.environ["TAVILY_API_KEY"] = "YOUR_TtAVILY_API_KEY"
+os.environ["TAVILY_API_KEY"] = "YOUR_TAVILY_API_KEY"
 
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 search_tool=TavilySearchResults()
