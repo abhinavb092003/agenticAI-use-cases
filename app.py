@@ -25,13 +25,13 @@ if st.button("Generate Proposal Outline") and company:
         verbose=True
     )
 
-writer = Agent(
-    role='Proposal Architect',
-    goal='Create a high-level proposal outline based on research',
-    backstory='Specialist in creating persuasive business cases.',
-    llm=llm,
-    verbose=True
-)
+    writer = Agent(
+        role='Proposal Architect',
+        goal='Create a high-level proposal outline based on research',
+        backstory='Specialist in creating persuasive business cases.',
+        llm=llm,
+        verbose=True
+    )
 
 task1=Task(description=f'Serach for {company}s mission and 2026 goals.', agent=researcher, expected_output="A summary of company goals.")
 task2 = Task(description='Draft a 3-section proposal outline.', agent=writer, expected_output="A markdown formatted proposal outline.")
