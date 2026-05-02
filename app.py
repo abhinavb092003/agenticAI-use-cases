@@ -31,7 +31,7 @@ writer = Agent(
 )
 
 task1=Task(description=f'Serach for {company}s mission and 2026 goals.', agent=researcher, expected_output="A summary of company goals.")
-task2 = Task(description='Draft a 3-section proposal_outline.', agent=writer, expected output="A markdown formatted proposal outline.")
+task2 = Task(description='Draft a 3-section proposal outline.', agent=writer, expected_output="A markdown formatted proposal outline.")
 crew = Crew(agents=[researcher, writer], tasks=[task1, task2], process = Process.sequential)
 with st.spinner("Agents are working....."):
     result = crew.kickoff()
