@@ -11,7 +11,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 search_tool=TavilySearchResults()
 st.title("Free Agentic Proposal Researcher")
 company=st.text_input("Enter Company Name to Research:")
-if st.button(Generate Proposal Outline) and company:
+if st.button("Generate Proposal Outline") and company:
 researcher=Agent(
 
 role='Business Researcher',
