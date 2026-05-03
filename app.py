@@ -45,7 +45,7 @@ if st.button("Launch Agent") and company:
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
     
     # Define Tool
-    search_tool = TavilySearchTool()
+    search_tool = TavilySearchTool(max_results=3)
 
     # Define Agent
     researcher = Agent(
