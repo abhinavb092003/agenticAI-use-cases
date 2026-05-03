@@ -1,4 +1,15 @@
-# 1. THE SQLITE PATCH (MUST BE AT THE VERY TOP)
+import subprocess
+import sys
+
+# 1. THE "GHOST" FIX
+# This manually installs the missing library if the requirements.txt failed
+try:
+    import pkg_resources
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "setuptools"])
+    import pkg_resources
+
+# 2. THE SQLITE FIX
 try:
     __import__('pysqlite3')
     import sys
@@ -9,57 +20,58 @@ except ImportError:
 import os
 import streamlit as st
 
-# 2. Disable background telemetry to avoid the pkg_resources check entirely
+# 3. DISABLE BACKGROUND NOISE
 os.environ["OTEL_SDK_DISABLED"] = "true"
 
 from crewai import Agent, Task, Crew
 from langchain_google_genai import ChatGoogleGenerativeAI
 from crewai_tools import TavilySearchTool
 
-# 3. Setup API Keys
+# 4. API SETUP
+# Make sure these are in your Streamlit Secrets!
 os.environ["GOOGLE_API_KEY"] = st.secrets.get("GOOGLE_API_KEY", "")
 os.environ["TAVILY_API_KEY"] = st.secrets.get("TAVILY_API_KEY", "")
 
-# 4. Brain & Tool Initialization
-llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
-    google_api_key=os.environ["GOOGLE_API_KEY"]
-)
+st.title("🚀 My First Agentic AI")
 
-st.title("🚀 My First AI Agent")
+company = st.text_input("Which company should I research?")
 
-company = st.text_input("Enter a company to research:")
+if st.button("Launch Agent") and company:
+    if not os.environ["GOOGLE_API_KEY"]:
+        st.error("Please add your GOOGLE_API_KEY to Streamlit Secrets!")
+        st.stop()
 
-if st.button("Run Research") and company:
+    # Define Brain
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
+    
+    # Define Tool
     search_tool = TavilySearchTool()
 
+    # Define Agent
     researcher = Agent(
         role='Market Researcher',
         goal=f'Find 3 facts about {company}',
-        backstory='A helpful AI assistant.',
+        backstory='A helpful and concise research assistant.',
         tools=[search_tool],
         llm=llm,
         verbose=True,
         memory=False
     )
 
+    # Define Task
     task = Task(
-        description=f'Search for news on {company}.',
+        description=f'Find news for {company} in 2026.',
         expected_output='3 bullet points.',
         agent=researcher
     )
 
-    crew = Crew(
-        agents=[researcher],
-        tasks=[task],
-        verbose=True,
-        memory=False
-    )
+    # Define Crew
+    crew = Crew(agents=[researcher], tasks=[task], memory=False)
     
     with st.spinner("Agent is working..."):
         try:
             result = crew.kickoff()
-            st.success("Done!")
+            st.success("Research Complete!")
             st.markdown(result.raw)
         except Exception as e:
-            st.error(f"Something went wrong: {e}")
+            st.error(f"Execution Error: {e}")
