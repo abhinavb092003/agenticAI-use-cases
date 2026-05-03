@@ -69,9 +69,9 @@ if st.button("Launch Agent") and company:
     crew = Crew(agents=[researcher], tasks=[task], verbose=True, memory=False,stream=True)
     
     with st.status("🚀 Agent Workflow Active...", expanded=True) as status:
-    st.write("🔍 Searching Tavily for latest news...")
-    # ... code runs ...
-    status.update(label="✅ Research Complete!", state="complete", expanded=False)
+        st.write("🔍 Searching Tavily for latest news...")
+        # ... code runs ...
+        status.update(label="✅ Research Complete!", state="complete", expanded=False)
     
     with st.spinner("Agent is working..."):
         streaming_output = crew.kickoff()
