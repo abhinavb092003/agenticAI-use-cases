@@ -1,3 +1,4 @@
+setuptools
 pysqlite3-binary
 crewai==0.28.8
 crewai-tools==0.1.6
