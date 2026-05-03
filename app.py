@@ -66,13 +66,13 @@ if st.button("Launch Agent") and company:
     )
 
   # 1. Define Crew with Streaming enabled
-crew = Crew(
-    agents=[researcher],
-    tasks=[task],
-    verbose=True,
-    memory=False,
-    stream=True  # Enables the streaming return type
-)
+    crew = Crew(
+        agents=[researcher],
+        tasks=[task],
+        verbose=True,
+        memory=False,
+        stream=True  # Enables the streaming return type
+    )
 
 if st.button("Launch Agent"):
     # Create a status container to show the background steps
