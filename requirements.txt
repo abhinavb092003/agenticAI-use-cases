@@ -1,7 +1,6 @@
 setuptools
 pysqlite3-binary
-crewai==0.28.8
-crewai-tools==0.1.6
-langchain-google-genai==1.0.1
-tavily-python
+crewai
+crewai-tools
+langchain-google-genai
 streamlit
