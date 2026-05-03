@@ -9,9 +9,8 @@ except ImportError:
 import os
 import streamlit as st
 
-# 2. Disable all background telemetry and memory checks
+# 2. Disable background telemetry to avoid the pkg_resources check entirely
 os.environ["OTEL_SDK_DISABLED"] = "true"
-os.environ["PYDANTIC_SKIP_VALIDATOR_STRINGS"] = "true"
 
 from crewai import Agent, Task, Crew
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -21,7 +20,7 @@ from crewai_tools import TavilySearchTool
 os.environ["GOOGLE_API_KEY"] = st.secrets.get("GOOGLE_API_KEY", "")
 os.environ["TAVILY_API_KEY"] = st.secrets.get("TAVILY_API_KEY", "")
 
-# 4. Define the Brain (Flash is the best "Free" engine)
+# 4. Brain & Tool Initialization
 llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash",
     google_api_key=os.environ["GOOGLE_API_KEY"]
@@ -32,10 +31,8 @@ st.title("🚀 My First AI Agent")
 company = st.text_input("Enter a company to research:")
 
 if st.button("Run Research") and company:
-    # 5. Initialize the Tool inside the button click to save memory
     search_tool = TavilySearchTool()
 
-    # 6. Define a SINGLE Agent (Simpler is better for the first run)
     researcher = Agent(
         role='Market Researcher',
         goal=f'Find 3 facts about {company}',
@@ -46,14 +43,12 @@ if st.button("Run Research") and company:
         memory=False
     )
 
-    # 7. Define the Task
     task = Task(
         description=f'Search for news on {company}.',
         expected_output='3 bullet points.',
         agent=researcher
     )
 
-    # 8. Define the Crew
     crew = Crew(
         agents=[researcher],
         tasks=[task],
