@@ -66,9 +66,17 @@ if st.button("Launch Agent") and company:
     )
 
     # Define Crew
-    crew = Crew(agents=[researcher], tasks=[task], memory=False)
+    crew = Crew(agents=[researcher], tasks=[task], memory=False,stream=True)
     
     with st.spinner("Agent is working..."):
+        streaming_output = crew.kickoff()
+        placeholder = st.empty()
+        full_text = ""
+        for chunk in streaming_output:
+            full_text += str(chunk.content)
+            placeholder.markdown(full_text + "▌") # Adds a typing cursor effect
+    
+    placeholder.markdown(full_text) # Final clean output
         try:
             result = crew.kickoff()
             st.success("Research Complete!")
