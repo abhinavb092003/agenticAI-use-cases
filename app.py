@@ -66,7 +66,7 @@ if st.button("Launch Agent") and company:
     )
 
     # Define Crew
-    crew = Crew(agents=[researcher], tasks=[task], memory=False,stream=True)
+    crew = Crew(agents=[researcher], verbose=True, tasks=[task], memory=False,stream=True)
     
     with st.spinner("Agent is working..."):
         streaming_output = crew.kickoff()
