@@ -14,26 +14,26 @@ llm = ChatGoogleGenerativeAI(
     temperature=0.1 # Forces concise, faster responses
 )
 
-# 3. OPTIMIZED TOOL (Ultra-fast search)
-# We set search_depth to 'ultra-fast' and limit results to 2 to maximize speed
-search_tool = TavilySearchTool(search_depth="ultra-fast", max_results=2)
+# 1. OPTIMIZED TOOL (Corrected search_depth)
+# 'basic' is the fastest valid option for this tool wrapper.
+search_tool = TavilySearchTool(search_depth="basic", max_results=2)
+
 
 st.title("🚀 Fast Agentic Researcher")
 company = st.text_input("Enter Company Name:")
 
 if st.button("Run Fast Research", key="fast_btn") and company:
     # Define Agent
+    # Ensure the agent isn't over-thinking by keeping the goal simple.
     researcher = Agent(
         role='Swift Reporter',
-        goal=f'Summarize 3 news facts for {company}',
-        backstory='You provide high-speed, accurate summaries.',
+        goal=f'Quickly summarize 3 facts about {company}',
+        backstory='You are optimized for speed and brevity.',
         tools=[search_tool],
         llm=llm,
         verbose=True,
         memory=False
     )
-
-    # Define Task
     task = Task(
         description=f'Quickly find 3 recent news bullet points about {company}.',
         expected_output='3 concise bullet points.',
