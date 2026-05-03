@@ -65,21 +65,37 @@ if st.button("Launch Agent") and company:
         agent=researcher
     )
 
-    # Define Crew
-    crew = Crew(agents=[researcher], tasks=[task], verbose=True, memory=False,stream=True)
-    
+  # 1. Define Crew with Streaming enabled
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    verbose=True,
+    memory=False,
+    stream=True  # Enables the streaming return type
+)
+
+if st.button("Launch Agent"):
+    # Create a status container to show the background steps
     with st.status("🚀 Agent Workflow Active...", expanded=True) as status:
-        st.write("🔍 Searching Tavily for latest news...")
-        # ... code runs ...
-        status.update(label="✅ Research Complete!", state="complete", expanded=False)
-    
-    with st.spinner("Agent is working..."):
+        st.write("🔍 Searching for latest news...")
+        
+        # Start the streaming execution
+        # kickoff() returns a streaming object we can iterate over
         streaming_output = crew.kickoff()
+        
+        # Create a placeholder for the "typing" effect below the status box
         placeholder = st.empty()
         full_text = ""
+        
+        # Iterate over the chunks as they arrive from Gemini
         for chunk in streaming_output:
+            # In 2026, chunks have a .content attribute
             full_text += str(chunk.content)
-            placeholder.markdown(full_text + "▌") # Adds a typing cursor effect
-    
-    placeholder.markdown(full_text) # Final clean output
+            placeholder.markdown(full_text + "▌")
+        
+        # Final clean update (remove the cursor)
+        placeholder.markdown(full_text)
+        
+        # Update the status bar to 'Complete'
+        status.update(label="✅ Research Complete!", state="complete", expanded=False)
        
