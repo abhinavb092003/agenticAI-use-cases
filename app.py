@@ -77,9 +77,4 @@ if st.button("Launch Agent") and company:
             placeholder.markdown(full_text + "▌") # Adds a typing cursor effect
     
     placeholder.markdown(full_text) # Final clean output
-        try:
-            result = crew.kickoff()
-            st.success("Research Complete!")
-            st.markdown(result.raw)
-        except Exception as e:
-            st.error(f"Execution Error: {e}")
+       
